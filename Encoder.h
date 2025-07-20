@@ -1,6 +1,7 @@
 /*
-*Library for controlling 2 channels rotary encoder with interrupts.
-*Created by Magdi Laoun, 19th July 2025.
+* Library for controlling 2 channels rotary encoder with interrupts.
+* Created by Magdi Laoun, 19th July 2025.
+* 20th July 2025: Added static instance for interrupt handling.
 */
 #include <Arduino.h>
 class Encoder {
@@ -10,7 +11,8 @@ class Encoder {
     volatile long position; //Encoder position
     volatile bool aState; //State of channel A
     volatile bool bState; //State of channel B
-    
+    void handleInterruptA(); //Handle interrupt for channel A
+    void handleInterruptB(); //Handle interrupt for channel B
 
   public:
     Encoder(uint8_t cha_, uint8_t chb_);
@@ -18,8 +20,8 @@ class Encoder {
     long getPosition(); //Get current encoder position
     void resetPosition(); //Reset encoder position to zero
     void setEncoderEnabled(bool enable); //Enable or disable encoder interrupts
-    void handleInterruptA(); //Handle interrupt for channel A
-    void handleInterruptB(); //Handle interrupt for channel B
+    friend void isrHandleInterruptA();
+    friend void isrHandleInterruptB();
 };
 void isrHandleInterruptA();
 void isrHandleInterruptB();

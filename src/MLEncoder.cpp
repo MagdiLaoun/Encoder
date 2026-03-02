@@ -3,7 +3,7 @@
 * Created by Magdi Laoun, 19th July 2025.
 * 20th July 2025: Added static instance for interrupt handling.
 */
-#include <Encoder.h>
+#include <MLEncoder.h>
 static Encoder* encoderInstance = nullptr;
 Encoder::Encoder(uint8_t cha_, uint8_t chb_) {
     cha = cha_;

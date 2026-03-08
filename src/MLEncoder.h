@@ -15,13 +15,12 @@ class Encoder {
     void handleInterruptB(); //Handle interrupt for channel B
 
   public:
-    Encoder(uint8_t cha_, uint8_t chb_);
-    void begin(); //Initialize encoder
+    void begin(uint8_t cha_, uint8_t chb_); //Initialize encoder
     long getPosition(); //Get current encoder position
     void resetPosition(); //Reset encoder position to zero
     void setEncoderEnabled(bool enable); //Enable or disable encoder interrupts
-    friend void isrHandleInterruptA();
-    friend void isrHandleInterruptB();
+    friend void isrHandleInterruptA(); //Friend function for handling interrupt A
+    friend void isrHandleInterruptB(); //Friend function for handling interrupt B
 };
-void isrHandleInterruptA();
-void isrHandleInterruptB();
+void isrHandleInterruptA(); //Interrupt service routine for channel A
+void isrHandleInterruptB(); //Interrupt service routine for channel B

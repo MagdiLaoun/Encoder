@@ -1,12 +1,31 @@
 {
+  "$schema": "https://raw.githubusercontent.com/platformio/platformio-core/develop/platformio/assets/schema/library.json",
   "name": "MLEncoder",
   "version": "1.0.0",
-  "date": "2025-07-19",
   "description": "Library for controlling 2 channels rotary encoder with interrupts",
+  "keywords": "encoder, rotary, interrupt",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MagdiLaoun/MLEncoder.git"
+  },
   "authors": [
     {
       "name": "Magdi Laoun",
       "email": "magdi.laoun@gmail.com"
+    }
+  ],
+  "frameworks": [
+    "arduino", "espidf"
+  ],
+  "platforms": [
+    "espressif32"
+  ],
+  "headers": ["MLEncoder.h"],
+  "examples": [
+    {
+      "name": "Readme",
+      "base": "",
+      "files": ["readme.md"]
     }
   ]
 }

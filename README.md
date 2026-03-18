@@ -11,6 +11,7 @@ La librairie est basée sur un système d'Interrupt. L'interrupt est une fonctio
 en priorité absolue sur le reste du code. Dès que le microcontrôleur détecte un changement d'état de A ou B, la librairie exécute 
 l'incrémentation ou décrémentation du compteur, en priorité sur le reste du programme. Cela permet d'éviter de rater une transition
 et ainsi s'assurer que le compteur donne une valeur correcte de la position.
+Note: On peut déclarer plusieurs codeurs, permettant ainsi la lecture de plusieurs codeurs à la fois.
 
 This library allows you to measure an incremental position sensor with two channels, A and B.
 This type of position sensor provides two digital signals, A and B, which can be either high or low.
@@ -24,3 +25,4 @@ The library is based on an interrupt system. An interrupt is a feature that allo
 with absolute priority over the rest of the code. As soon as the microcontroller detects a change in the state of A or B, the library executes 
 the increment or decrement of the counter, with priority over the rest of the programme. This prevents any transitions from being missed
 and ensures that the counter gives a correct position value.
+Note: You can declare multiple encoders, thereby enabling the reading of multiple encoders at the same time.

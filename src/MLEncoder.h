@@ -6,21 +6,17 @@
 #include <Arduino.h>
 class Encoder {
   private:
-    uint8_t cha; //Channel A pin
-    uint8_t chb; //Channel B pin
-    volatile long position; //Encoder position
-    volatile bool aState; //State of channel A
-    volatile bool bState; //State of channel B
-    void handleInterruptA(); //Handle interrupt for channel A
-    void handleInterruptB(); //Handle interrupt for channel B
-
-  public:
-    void begin(uint8_t cha_, uint8_t chb_); //Initialize encoder
-    long getPosition(); //Get current encoder position
-    void resetPosition(); //Reset encoder position to zero
-    void setEncoderEnabled(bool enable); //Enable or disable encoder interrupts
-    friend void isrHandleInterruptA(); //Friend function for handling interrupt A
-    friend void isrHandleInterruptB(); //Friend function for handling interrupt B
+    uint8_t cha; // Pin for channel A
+    uint8_t chb; // Pin for channel B
+    volatile long position; // Current position of the encoder
+    volatile bool aState; // State of channel A
+    volatile bool bState; // State of channel B
+    static void IRAM_ATTR handleInterruptA(void* arg); // Interrupt handler for channel A
+    static void IRAM_ATTR handleInterruptB(void* arg); // Interrupt handler for channel B
+    void IRAM_ATTR update(bool channelA); // Update the position based on the state of the channels
+    public:
+    void begin(uint8_t pinA, uint8_t pinB); // Initialize the encoder with specified pins
+    long getPosition(); // Get the current position of the encoder
+    void resetPosition(); // Reset the encoder position to zero
+    void setEncoderEnabled(bool enabled); // Enable or disable the encoder
 };
-void isrHandleInterruptA(); //Interrupt service routine for channel A
-void isrHandleInterruptB(); //Interrupt service routine for channel B

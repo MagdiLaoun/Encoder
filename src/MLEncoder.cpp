@@ -4,54 +4,55 @@
 * 20th July 2025: Added static instance for interrupt handling.
 */
 #include <MLEncoder.h>
-static Encoder* encoderInstance = nullptr;
-void Encoder::begin(uint8_t cha_, uint8_t chb_) {
-  cha = cha_;
-  chb = chb_;
-  position = 0;
-  aState = LOW;
-  bState = LOW;
-  pinMode(cha, INPUT_PULLUP);
-  pinMode(chb, INPUT_PULLUP);
-  attachInterrupt(digitalPinToInterrupt(cha), isrHandleInterruptA, CHANGE);
-  attachInterrupt(digitalPinToInterrupt(chb), isrHandleInterruptB, CHANGE);  
-  encoderInstance = this; //Set the static instance to this object
+void Encoder::begin(uint8_t pinA, uint8_t pinB) {
+  cha = pinA; // Store pin numbers for channel A and B
+  chb = pinB; 
+  position = 0; // Initialize position to zero
+  aState = digitalRead(cha); // Read initial state of channel A
+  bState = digitalRead(chb); // Read initial state of channel B
+  pinMode(cha, INPUT_PULLUP); // Set channel A pin as input with pull-up resistor
+  pinMode(chb, INPUT_PULLUP); // Set channel B pin as input with pull-up resistor
+  // Attach interrupts for both channels to handle changes in state
+  attachInterruptArg(digitalPinToInterrupt(cha), handleInterruptA, this,  CHANGE); 
+  attachInterruptArg(digitalPinToInterrupt(chb), handleInterruptB, this, CHANGE); 
 }
-long Encoder::getPosition() { //Return the current position of the encoder
-  return position;
+long Encoder::getPosition() {
+  return position; // Return the current position of the encoder
 }
-void Encoder::resetPosition() { //Reset the encoder position to zero
-  position = 0;
+void Encoder::resetPosition() {
+  position = 0; // Reset the encoder position to zero
 }
-void Encoder::handleInterruptA() { //Handle interrupt for channel A
-  aState = digitalRead(cha);
-  if (aState ^ bState) {
-    position++;
-  } else {
-    position--;
-  }
-}
-void Encoder::handleInterruptB() { //Handle interrupt for channel B
-  bState = digitalRead(chb);
-  if (aState ^ bState) { //If the states of A and B are different, the encoder is moving in one direction
-    position--;
-  } else {
-    position++;
-  }
-}
-void Encoder::setEncoderEnabled(bool enable) { //Enable or disable encoder interrupts
-  if (enable) {
-    attachInterrupt(digitalPinToInterrupt(cha), isrHandleInterruptA, CHANGE);
-    attachInterrupt(digitalPinToInterrupt(chb), isrHandleInterruptB, CHANGE);
+void Encoder::setEncoderEnabled(bool enabled) {
+  // Enable or disable the encoder by attaching or detaching interrupts
+  if (enabled) {
+    attachInterruptArg(digitalPinToInterrupt(cha), handleInterruptA, this, CHANGE);
+    attachInterruptArg(digitalPinToInterrupt(chb), handleInterruptB, this, CHANGE);
   } else {
     detachInterrupt(digitalPinToInterrupt(cha));
     detachInterrupt(digitalPinToInterrupt(chb));
   }
 }
-void isrHandleInterruptA() {
-  if (encoderInstance) encoderInstance->handleInterruptA();
+void IRAM_ATTR Encoder::handleInterruptA(void* arg) {
+  Encoder* enc = static_cast<Encoder*>(arg); // Cast the argument to an Encoder pointer
+  enc->update(true);
 }
-
-void isrHandleInterruptB() {
-  if (encoderInstance) encoderInstance->handleInterruptB();
+void IRAM_ATTR Encoder::handleInterruptB(void* arg) {
+  Encoder* enc = static_cast<Encoder*>(arg); // Cast the argument to an Encoder pointer
+  enc->update(false);
+}
+void IRAM_ATTR Encoder::update(bool channelA) {
+  // Read the current state of both channels
+  bool a = digitalRead(cha);
+  bool b = digitalRead(chb);
+  if (channelA) {
+    if (a != aState) {
+      position += (a == b) ? -1 : 1; // Update position based on the state of the channels
+      aState = a;
+    }
+  } else {
+    if (b != bState) {
+      position += (a != b) ? -1 : 1; // Update position based on the state of the channels
+      bState = b;
+    }
+  }
 }
